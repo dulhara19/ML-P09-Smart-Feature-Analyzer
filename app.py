@@ -44,8 +44,7 @@ if uploaded_file is not None:
 
 st.write("### 🌈 Principal Component Analysis (PCA)")
 
-numeric_df = df.select_dtypes(include=['float64', 'int64'])
-max_components = min(numeric_df.shape[1], numeric_df.shape[0])
+max_components = min(numeric_df.shape[1], numeric_df.shape[0]) 
 num_components = st.slider("Select number of principal components", 1, max_components, 2)
 
 pca_df, explained_variance, pc_columns = apply_pca(df, n_components=num_components)
@@ -62,3 +61,68 @@ if pca_df is not None:
         st.bar_chart(exp_var_df.set_index('Principal Component'))
 else:
         st.warning("⚠️ PCA requires at least some numeric features.")
+
+
+#-------------------------
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, ConfusionMatrixDisplay
+import matplotlib.pyplot as plt
+
+st.write("### 🤖 Build a Quick Machine Learning Model")
+
+# Target selection
+target_col = st.selectbox("🎯 Select target column", df.columns)
+
+# Drop non-numeric features (except target)
+numeric_df = df.select_dtypes(include=['float64', 'int64', 'int32'])
+
+# Drop target temporarily from features
+if target_col in numeric_df.columns:
+    X = numeric_df.drop(columns=[target_col])
+else:
+    X = numeric_df.copy()
+
+# Re-check PCA
+from sklearn.decomposition import PCA
+
+num_components = min(X.shape[1], 3)  # Limit to 3 for simplicity
+pca = PCA(n_components=num_components)
+X_pca = pca.fit_transform(X)
+
+# Encode target if needed
+from sklearn.preprocessing import LabelEncoder
+y = df[target_col]
+if y.dtype == 'object':
+    y = LabelEncoder().fit_transform(y)
+
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X_pca, y, test_size=0.2, random_state=42)
+
+# Model selection
+model_type = st.selectbox("🧠 Choose your model", ["Logistic Regression", "Random Forest"])
+
+if st.button("Train Model"):
+    if model_type == "Logistic Regression":
+        model = LogisticRegression()
+    else:
+        model = RandomForestClassifier()
+
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+
+    acc = accuracy_score(y_test, y_pred)
+    st.success(f"✅ Accuracy: {acc * 100:.2f}%")
+
+    # Plot confusion matrix
+    fig, ax = plt.subplots()
+    cm = confusion_matrix(y_test, y_pred)
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+    disp.plot(ax=ax)
+    st.pyplot(fig)
+
+
+
+#-------------------------
+
