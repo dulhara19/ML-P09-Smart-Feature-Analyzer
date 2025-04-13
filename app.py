@@ -3,6 +3,8 @@
 import streamlit as st
 import pandas as pd
 from preprocessing.correlation import find_high_correlations
+from preprocessing.pca import apply_pca
+
 
 st.set_page_config(page_title="Smart Feature Analyzer", layout="wide")
 
@@ -21,19 +23,20 @@ else:
 
 #-------------------------
 
-    st.write("### 📊 High Correlation Detection")
+if uploaded_file is not None:
+        st.write("### 📊 High Correlation Detection")
 
-    numeric_df = df.select_dtypes(include=['float64', 'int64'])
-    threshold = st.slider("Set correlation threshold:", 0.0, 1.0, 0.9)
+        numeric_df = df.select_dtypes(include=['float64', 'int64'])
+        threshold = st.slider("Set correlation threshold:", 0.0, 1.0, 0.9)
 
-    if numeric_df.shape[1] >= 2:
-        result = find_high_correlations(numeric_df, threshold=threshold)
+        if numeric_df.shape[1] >= 2:
+            result = find_high_correlations(numeric_df, threshold=threshold)
 
-        if result.empty:
-            st.success("✅ No feature pairs found above the threshold.")
+            if result.empty:
+                st.success("✅ No feature pairs found above the threshold.")
+            else:
+                st.warning("⚠️ Highly correlated features detected:")
+                st.dataframe(result)
         else:
-            st.warning("⚠️ Highly correlated features detected:")
-            st.dataframe(result)
-    else:
-        st.info("Need at least two numeric features to calculate correlation.")
+            st.info("Need at least two numeric features to calculate correlation.")
 
