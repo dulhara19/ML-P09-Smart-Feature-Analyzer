@@ -44,6 +44,7 @@ if uploaded_file is not None:
 
 st.write("### 🌈 Principal Component Analysis (PCA)")
 
+numeric_df = df.select_dtypes(include=['float64', 'int64'])
 max_components = min(numeric_df.shape[1], numeric_df.shape[0])
 num_components = st.slider("Select number of principal components", 1, max_components, 2)
 
@@ -53,7 +54,6 @@ if pca_df is not None:
         st.write("#### 🔍 PCA Components:")
         st.dataframe(pca_df)
 
-        # Variance chart
         st.write("#### 📈 Explained Variance Ratio")
         exp_var_df = pd.DataFrame({
             'Principal Component': pc_columns,
