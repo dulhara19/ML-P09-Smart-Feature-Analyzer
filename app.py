@@ -40,7 +40,7 @@ if uploaded_file is not None:
         else:
             st.info("Need at least two numeric features to calculate correlation.")
 
-
+#-------------------------
 
 st.write("### 🌈 Principal Component Analysis (PCA)")
 
