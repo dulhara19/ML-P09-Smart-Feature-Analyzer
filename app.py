@@ -40,3 +40,25 @@ if uploaded_file is not None:
         else:
             st.info("Need at least two numeric features to calculate correlation.")
 
+
+
+st.write("### 🌈 Principal Component Analysis (PCA)")
+
+max_components = min(numeric_df.shape[1], numeric_df.shape[0])
+num_components = st.slider("Select number of principal components", 1, max_components, 2)
+
+pca_df, explained_variance, pc_columns = apply_pca(df, n_components=num_components)
+
+if pca_df is not None:
+        st.write("#### 🔍 PCA Components:")
+        st.dataframe(pca_df)
+
+        # Variance chart
+        st.write("#### 📈 Explained Variance Ratio")
+        exp_var_df = pd.DataFrame({
+            'Principal Component': pc_columns,
+            'Explained Variance': explained_variance
+        })
+        st.bar_chart(exp_var_df.set_index('Principal Component'))
+else:
+        st.warning("⚠️ PCA requires at least some numeric features.")
