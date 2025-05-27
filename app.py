@@ -157,6 +157,8 @@ if st.button("Train Model"):
         fig = px.scatter(pca_plot_df, x='PC1', y='PC2', color=pca_plot_df['Target'].astype(str),
                          title="PCA Scatter Plot")
         st.plotly_chart(fig)
+        
+
 
     # Model download
     buffer = io.BytesIO()
