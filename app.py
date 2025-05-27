@@ -1,5 +1,3 @@
-# app.py
-
 import streamlit as st
 import pandas as pd
 from preprocessing.correlation import find_high_correlations
@@ -16,7 +14,6 @@ import joblib
 import io
 
 st.set_page_config(page_title="Smart Feature Analyzer", layout="wide")
-
 st.title("🌀 Smart Feature Analyzer")
 
 uploaded_file = st.file_uploader("📂 Upload your CSV file", type=["csv"])
@@ -157,8 +154,6 @@ if st.button("Train Model"):
                          title="PCA Scatter Plot")
         st.plotly_chart(fig)
         
-
-
     # Model download
     buffer = io.BytesIO()
     joblib.dump(model, buffer)
